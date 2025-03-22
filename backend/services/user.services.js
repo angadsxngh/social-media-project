@@ -20,7 +20,7 @@ const validatePassword = async (enteredPassword, storedPassword) => {
 };
 
 const generateAccessToken = async(user) => {
-    jwt.sign(
+    return jwt.sign(
         {
             id: user.id,
             email: user.email,
@@ -35,9 +35,9 @@ const generateAccessToken = async(user) => {
 }
 
 const generateRefreshToken = async(user) => {
-    jwt.sign(
+    return jwt.sign(
         {
-            username: user.username
+            id: user.id
         },
         process.env.REFRESH_TOKEN_SECRET,
         {

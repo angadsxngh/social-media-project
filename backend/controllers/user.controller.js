@@ -4,10 +4,8 @@ import {ApiError} from "../utils/ApiError.js"
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { findUserByEmailOrUsername, generateAccessToken, generateRefreshToken, validatePassword } from "../services/user.services.js";
-import { generateToken } from "../utils/jwt.utils.js";
-import { hash } from "bcryptjs";
 import bcrypt from "bcryptjs";
-import { error } from "console";
+import jwt from 'jsonwebtoken'
 
 const prisma=new PrismaClient();
 
@@ -63,6 +61,8 @@ const registerUser = asyncHandler(async(req,res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    const tempUser = { id: crypto.randomUUID() }
+    const refreshToken = await generateRefreshToken(tempUser)
 
     const user = await prisma.user.create({
         data:{
@@ -72,9 +72,11 @@ const registerUser = asyncHandler(async(req,res) => {
             password: hashedPassword,
             number: number,
             pfp: pfp.url,    
+            refreshToken: refreshToken
         }
     })
 
+    const accessToken = await generateAccessToken(user)
 
     const createdUser = await prisma.user.findUnique({
         where:{
@@ -86,10 +88,18 @@ const registerUser = asyncHandler(async(req,res) => {
         throw new ApiError(500, "Error occured while registering the user")
     }
 
-    return res.status(201).json(
+    const options = {
+        httpOnly: true,
+        secure: true
+    }
+
+    return res
+    .status(201)
+    .cookie("refreshToken", refreshToken, options)
+    .cookie("accessToken", accessToken, options)
+    .json(
         new ApiResponse(200, createdUser, "User registered successfully")
     )
-
 })
 
 const loginUser = asyncHandler(async(req, res) => {
@@ -111,9 +121,6 @@ const loginUser = asyncHandler(async(req, res) => {
 
         const enteredPassword = password
         const userPass = user.password
-        
-        console.log("entered password",enteredPassword);
-        console.log("Hashed password",userPass);
     
         const isPasswordValid =await  bcrypt.compare(enteredPassword, userPass);
     
@@ -122,7 +129,9 @@ const loginUser = asyncHandler(async(req, res) => {
         }
 
         const accessToken = await generateAccessToken(user)
+        console.log("access token: ", accessToken)
         const refreshToken = await generateRefreshToken(user)
+        console.log("refresh token: ", refreshToken)
 
         const options = {
             httpOnly: true,
@@ -147,7 +156,186 @@ const loginUser = asyncHandler(async(req, res) => {
     
 })
 
+//secured
+
+const logoutUser = asyncHandler(async(req,res) => {
+
+    const options = {
+        httpOnly: true,
+        secure: true
+    }
+
+    res.clearCookie("accessToken", options)
+    res.clearCookie("refreshToken", options)
+
+    return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "User logged out!"))
+})
+
+const refreshAccessToken = asyncHandler(async(req,res) => {
+
+    const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken
+
+    if(!incomingRefreshToken){
+        throw new ApiError(401, "Unauthorized request")
+    }
+
+    try {
+        
+        const decodedToken = jwt.verify(
+            incomingRefreshToken,
+            process.env.REFRESH_TOKEN_SECRET
+        )
+
+        console.log("decoded token: ",decodedToken);
+
+        const user = await prisma.user.findFirst({
+            where:{
+                id: decodedToken.id
+            }
+        })
+
+        console.log("user", user);
+        
+
+        if(!user){
+            throw new ApiError(401, "Invalid refresh token")
+        }
+
+        console.log("Incoming refresh token: ",incomingRefreshToken);
+        console.log("user refresh token: ",user.refreshToken);
+        
+
+        if(incomingRefreshToken !== user?.refreshToken){
+            throw new ApiError(401, "refresh token is expired or used")
+        }
+
+        const options = {
+            httpOnly: true,
+            secure: true,
+        }
+
+        const accessToken = generateAccessToken(user)
+        const newRefreshToken = generateRefreshToken(user)
+
+        return res
+        .send(200)
+        .cookie("access token", accessToken, options)
+        .cookie("refresh token", newRefreshToken, options)
+        .json(
+            new ApiResponse(
+                200,
+                {
+                    accessToken, refreshToken: newRefreshToken
+                },
+                "access token refreshed"
+            )
+        )
+
+    } catch (error) {
+        
+        throw new ApiError(401, error?.message || "invalid refresh token")
+
+    }
+})
+
+const changePassword = asyncHandler(async(req,res) => {
+    
+    const {newPassword, oldPassword} = req.body
+
+    const user = await prisma.user.findFirst({
+        where:{
+            id: req.user?.id
+        }
+    })
+
+    const isPasswordValid = await bcrypt.compare(oldPassword, user.password)
+
+    if(!isPasswordValid){
+        throw new ApiError(401, "Invalid password")
+    }
+
+    user.password = await bcrypt.hash(newPassword, 10)
+
+    await prisma.user.update({
+        where: { id: user.id },
+        data: {password: await bcrypt.hash(newPassword, 10) }
+    })
+
+    return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "password updated succesfully"))
+})
+
+const updateAccountDetails = asyncHandler(async (req, res) => {
+
+    const { name } = req.body;
+
+    console.log(req.body)
+    console.log("name", name)
+
+    if (!name) {
+        throw new ApiError(400, "field cannot be empty");
+    }   
+
+    const user = await prisma.user.findFirst({
+        where: {
+            id: req.user.id
+        }
+    });
+
+    if (!user) {
+        throw new ApiError(404, "User not found");
+    }
+
+    await prisma.user.update({
+        where: {
+            id: user.id
+        },
+        data: {name: name}
+    });
+
+    return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Account details updated successfully"))
+});
+
+const updatePfp = asyncHandler(async(req,res) => {
+
+    const pfpLocalPath = req.files?.pfp[0]?.path;
+
+    if(!pfpLocalPath){
+        throw new ApiError(400, "Pfp file is missing")
+    }
+
+    const pfp = await uploadOnCloudinary(pfpLocalPath)
+
+    if(!pfp.url){
+        throw new ApiError(400, "error while uploading on cloudinary")
+    }
+
+    await prisma.user.update({
+        where:{
+            id: req.user.id
+        },
+        data:{
+            pfp: pfp.url
+        }
+    })
+
+    return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Pfp updated succesfully"))
+
+})
+
 export {
     registerUser,
-    loginUser
+    loginUser,
+    logoutUser,
+    refreshAccessToken,
+    changePassword,
+    updateAccountDetails,
+    updatePfp
 }
