@@ -1,16 +1,17 @@
 import React from "react";
 import { Link } from 'react-router-dom'
+import logo from '../../images/twitter.png'
 
 export default function Footer() {
     return (
-        <footer className="bg-black border-y text-white mx-[-13.15%]">
+        <footer className="bg-black text-white mx-[-13.15%] ">
             <div className="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
-                <div className="md:flex md:justify-between">
+                <div className="flex flex-col md:flex md:justify-between">
                     <div className="mb-6 md:mb-0">
                         <Link to="/" className="flex items-center">
                             <img
-                                src="FUEQU"
-                                className="mr-3 h-16"
+                                src={logo}
+                                className="mr-3 w-12"
                                 alt="SOON TO BE ADDED"
                             />
                         </Link>
@@ -31,7 +32,7 @@ export default function Footer() {
                                 </li>
                             </ul>
                         </div>
-                        <div>
+                        <div className="hidden lg:block">
                             <h2 className="mb-6 text-sm font-semibold text-gray-400 uppercase">Follow us</h2>
                             <ul className="text-gray-600 font-medium">
                                 <li className="mb-4">
@@ -68,14 +69,16 @@ export default function Footer() {
                         </div>
                     </div>
                 </div>
-                <hr className="my-6 border-gray-200 sm:mx-auto lg:my-8" />
-                <div className="sm:flex sm:items-center sm:justify-between">
-                    <span className="text-sm text-gray-500 sm:text-center">
-                        
-                        All Rights Reserved.
-                    </span>
-                    <div className="flex mt-4 space-x-5 sm:justify-center sm:mt-0">
-                        <Link to="#" className="text-gray-500 hover:text-gray-900">
+                <hr className="my-6 border-gray-200 lg:my-8" />
+                <div className="flex justify-around space-x-[80%] flex-col lg:flex-row">
+                    <div className="">
+                        <span className="text-sm text-gray-500">
+                            
+                            All Rights Reserved.
+                        </span>
+                    </div>
+                    <div className="flex space-x-5 justify-center mt-5 lg:my-1">
+                        <Link to="#" className="text-gray-500 hover:text-white">
                             <svg
                                 className="w-4 h-4"
                                 aria-hidden="true"
@@ -91,7 +94,7 @@ export default function Footer() {
                             </svg>
                             <span className="sr-only">Facebook page</span>
                         </Link>
-                        <Link to="#" className="text-gray-500">
+                        <Link to="#" className="text-gray-500 hover:text-white">
                             <svg
                                 className="w-4 h-4"
                                 aria-hidden="true"
@@ -103,7 +106,7 @@ export default function Footer() {
                             </svg>
                             <span className="sr-only">Discord community</span>
                         </Link>
-                        <Link to="#" className="text-gray-500">
+                        <Link to="#" className="text-gray-500 hover:text-white">
                             <svg
                                 className="w-4 h-4"
                                 aria-hidden="true"
@@ -119,7 +122,7 @@ export default function Footer() {
                             </svg>
                             <span className="sr-only">Twitter page</span>
                         </Link>
-                        <Link to="#" className="text-gray-500">
+                        <Link to="#" className="text-gray-500 hover:text-white">
                             <svg
                                 className="w-4 h-4"
                                 aria-hidden="true"
