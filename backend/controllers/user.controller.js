@@ -315,7 +315,7 @@ const updatePfp = asyncHandler(async(req,res) => {
         throw new ApiError(400, "error while uploading on cloudinary")
     }
 
-    await prisma.user.update({
+    const user = await prisma.user.update({
         where:{
             id: req.user.id
         },
@@ -326,8 +326,45 @@ const updatePfp = asyncHandler(async(req,res) => {
 
     return res
     .status(200)
-    .json(new ApiResponse(200, {}, "Pfp updated succesfully"))
+    .json(new ApiResponse(200, user, "Pfp updated succesfully"))
 
+})
+
+const getUser = asyncHandler(async(req,res) => {
+    return res
+    .status(200)
+    .json(new ApiResponse(200, req.user, "User fetched"))
+})
+
+const deleteAccount = asyncHandler(async(req, res) => {
+
+    const {password} = req.body
+
+    const user = await prisma.user.findFirst({
+        where:{
+            id: req.user.id
+        }
+    })
+
+    if(!password){
+        throw new ApiError(400, "input field cannot be empty")
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password)
+
+    if(!isPasswordValid){
+        throw new ApiError(400, "Password is incorrect")
+    }
+
+    await prisma.user.delete({
+        where:{
+            id: req.user.id
+        }
+    })
+
+    return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Account deleted"))
 })
 
 export {
@@ -337,5 +374,7 @@ export {
     refreshAccessToken,
     changePassword,
     updateAccountDetails,
-    updatePfp
+    updatePfp,
+    getUser,
+    deleteAccount
 }

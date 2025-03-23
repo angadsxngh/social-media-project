@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { changePassword, loginUser, logoutUser, refreshAccessToken, registerUser, updateAccountDetails, updatePfp } from "../controllers/user.controller.js";
+import { changePassword, deleteAccount, getUser, loginUser, logoutUser, refreshAccessToken, registerUser, updateAccountDetails, updatePfp } from "../controllers/user.controller.js";
 import { upload } from "../middleware/multer.middleware.js";
 import { verifyJWT } from "../middleware/auth.middleware.js";
 
@@ -38,6 +38,10 @@ router.route("/update-pfp").post(
     ]),
     verifyJWT, updatePfp
 )
+
+router.route("/get-user").post(verifyJWT, getUser)
+
+router.route("/delete-account").post(verifyJWT, deleteAccount)
 
 
 export default router;
