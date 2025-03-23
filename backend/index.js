@@ -2,7 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser';
 import { PrismaClient } from '@prisma/client';
-import router from './routes/user.router.js';
+import userRouter from './routes/user.router.js';
 import cookieParser from 'cookie-parser';
 
 const app = express();
@@ -22,6 +22,6 @@ app.listen(3000, ()=> {
     console.log("server running on port 3000");
 })
 
-app.use('/api/v1/users', router)
+app.use('/api/v1/users', userRouter)
 
 export {app}
