@@ -61,8 +61,8 @@ const registerUser = asyncHandler(async(req,res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const tempUser = { id: crypto.randomUUID() }
-    const refreshToken = await generateRefreshToken(tempUser)
+    // const tempUser = { id: crypto.randomUUID() }
+    // const refreshToken = await generateRefreshToken(tempUser)
 
     const user = await prisma.user.create({
         data:{
@@ -72,12 +72,16 @@ const registerUser = asyncHandler(async(req,res) => {
             password: hashedPassword,
             number: number,
             pfp: pfp.url,    
-            refreshToken: refreshToken
+            // refreshToken: refreshToken
         }
     })
 
-    const accessToken = await generateAccessToken(user)
+    console.log(user);
+    
 
+    const accessToken = await generateAccessToken(user)
+    const refreshToken = await generateRefreshToken(user)
+    
     const createdUser = await prisma.user.findUnique({
         where:{
             username: username
@@ -90,16 +94,17 @@ const registerUser = asyncHandler(async(req,res) => {
 
     const options = {
         httpOnly: true,
-        secure: true
+        secure: true,
+        sameSite: "None",
+        path: "/",
     }
 
-    return res
-    .status(201)
+    res
     .cookie("refreshToken", refreshToken, options)
     .cookie("accessToken", accessToken, options)
-    .json(
-        new ApiResponse(200, createdUser, "User registered successfully")
-    )
+
+    return res.send()
+    
 })
 
 const loginUser = asyncHandler(async(req, res) => {
@@ -136,23 +141,20 @@ const loginUser = asyncHandler(async(req, res) => {
         const options = {
             httpOnly: true,
             secure: true,
+            sameSite: "None",
+            path: "/",
         }
     
         console.log(user);
     
-        return res
+        res
         .status(200)
         .cookie("accessToken", accessToken, options)
         .cookie("refreshToken", refreshToken, options)
-        .json(
-            new ApiResponse(
-                200,
-                {
-                    user: user, accessToken, refreshToken
-                },
-                "User logged in successfully"
-            )
-        )
+        
+        res.send({
+            user: user
+        })
     
 })
 
@@ -162,7 +164,9 @@ const logoutUser = asyncHandler(async(req,res) => {
 
     const options = {
         httpOnly: true,
-        secure: true
+        secure: true,
+        sameSite: "None",
+        path: "/",
     }
 
     res.clearCookie("accessToken", options)
@@ -214,6 +218,8 @@ const refreshAccessToken = asyncHandler(async(req,res) => {
         const options = {
             httpOnly: true,
             secure: true,
+            sameSite: "None",
+            path: "/",
         }
 
         const accessToken = generateAccessToken(user)
@@ -331,9 +337,9 @@ const updatePfp = asyncHandler(async(req,res) => {
 })
 
 const getUser = asyncHandler(async(req,res) => {
-    return res
-    .status(200)
-    .json(new ApiResponse(200, req.user, "User fetched"))
+    res.send({
+        user:req.user
+    })
 })
 
 const deleteAccount = asyncHandler(async(req, res) => {
@@ -364,6 +370,8 @@ const deleteAccount = asyncHandler(async(req, res) => {
 
     return res
     .status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
     .json(new ApiResponse(200, {}, "Account deleted"))
 })
 

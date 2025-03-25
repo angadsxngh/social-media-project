@@ -1,110 +1,57 @@
-import React, { useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { Link, NavLink } from 'react-router-dom'
-import Login from "../Login/Login";
+import Login from "../Login/LoginWithUsername";
 import LoginBtn from "../Buttons/LoginBtn";
 import SignUpBtn from "../Buttons/SignUpBtn";
 import Btn from "../Buttons/Btn";
 import menu from "../../images/hamburger.png"
 import logo from "../../images/twitter.png"
+import { useUser } from "../../context/UserContext";
+import { useContext } from "react";
 
 export default function Header() {
 
-    const [isOpen, setIsOpen] = useState(false);
+    const { user, logout } = useUser();
+    
+    const [isLoggedIn, setIsLoggedIn] = useState(false)
+    
+    useEffect(() => {
+        setIsLoggedIn(!user)
+    }, [user])
 
-    const menuClick = () => {
-
-        
-        setIsOpen(!isOpen)
-
+    const handleClick = async () => {
+        if(logout){
+            await logout()
+        setIsLoggedIn(false)
+        }
+        else{
+            console.log("logout function is undefined");
+            
+        }
     }
 
+
     return (
-        <header className="shadow sticky z-50 rounded mx-[-13.15%] mt-[-10%] lg:mt-[-2.7%]">
-            <nav className="bg-black px-3 w-full py-5">
-                <div className="hidden lg:flex flex-wrap justify-between items-center  text-white w-full">
-                    <div className="mr-[-20%] pr-0">
-                        <img className="w-[10%]" src={logo} alt="Logo" />
-                        {/* <img src="wnid" alt="soon to be added" /> */}
-                    </div>
-                    <div className="flex justify-between">
-                        <ul className="flex gap-3">
-                            <li><NavLink
-                                 to="/"
-                                     className={({isActive}) =>
-                                         `block pr-4 pl-4 py-2 duration-200 ${isActive ? "text-black bg-white " : "text-white"} border-b border-gray-100 hover:bg-gray-50 hover:text-black lg:border-0 rounded-lg`
-                                     }
-                                 >
-                                     Home
-                                 </NavLink></li> 
-                            <li><NavLink
-                                 to="/Posts"
-                                     className={({isActive}) =>
-                                         `block pr-4 pl-4 py-2 duration-200 ${isActive ? "text-black bg-white " : "text-white"} border-b border-gray-100 hover:bg-gray-50 hover:text-black lg:border-0 rounded-lg`
-                                     }
-                                 >
-                                     Posts
-                                 </NavLink></li> 
-                            <li><NavLink
-                                 to="/Messages"
-                                     className={({isActive}) =>
-                                         `block pr-4 pl-4 py-2 duration-200 ${isActive ? "text-black bg-white " : "text-white"} border-b border-gray-100 hover:bg-gray-50 hover:text-black lg:border-0 rounded-lg`
-                                     }
-                                 >
-                                     Messages
-                                 </NavLink></li> 
-                            <li><NavLink
-                                 to="/Account"
-                                     className={({isActive}) =>
-                                         `block pr-4 pl-4 py-2 duration-200 ${isActive ? "text-black bg-white " : "text-white"} border-b border-gray-100 hover:bg-gray-50 hover:text-black lg:border-0 rounded-lg`
-                                     }
-                                 >
-                                     Account
-                                 </NavLink></li> 
-                        </ul>
-                    </div>
-                    <div className="">
-                        <ul className="flex justify-between">
-                            <li><NavLink to={"/Login"}><LoginBtn/></NavLink></li>
-                            <li><NavLink to={"/SignUp"}><SignUpBtn/></NavLink></li>
-                        </ul>
+        <header className=" left-0 w-full bg-[#111] text-white font-bold leading-tight">
+            <nav className="flex justify-between items-center px-6 py-4 bg-[#111] shadow-md ">
+                {/* <h1 className="text-2xl font-bold text-blue-400">Connect</h1> */}
+                <img className="w-[10%] lg:w-[5%]" src={logo} alt="" />
+                {user && (
+                    <ul className="hidden md:flex gap-6">
+                    <NavLink to="/" className={({isActive}) => `${isActive?"text-blue-500":"text-white"}`}><button href="#" className="hover:text-blue-500">Home</button></NavLink>
+                    <NavLink to="/Posts" className={({isActive}) => `${isActive?"text-blue-500":"text-white"}`}><button href="#" className="hover:text-blue-500">Posts</button></NavLink>
+                    <NavLink to="/Messages" className={({isActive}) => `${isActive?"text-blue-500":"text-white"}`}><button href="#" className="hover:text-blue-500">Messages</button></NavLink>
+                    <NavLink to="/Account" className={({isActive}) => `${isActive?"text-blue-500":"text-white"}`}><button href="#" className="hover:text-blue-500">Profile</button></NavLink>
+                </ul>
+        )}
 
-                    </div>
-                </div>
+                {!user && (<NavLink to="SignUp"><button className="cursor-pointer bg-blue-400 px-6 py-3 rounded-lg text-black font-semibold">Sign Up</button></NavLink>)}
 
-                <div className="px-4">
-                    <ul className="flex lg:hidden justify-around">
-                        <li><img className="w-[10%]" src={logo} alt="LOGO" /></li>
-                        <li><button onClick={menuClick}><img className={`ml-[70%] mt-[5%] w-[30%] transform transition-transform duration-300 
-                            `} src={menu} alt="Menu" /><span
-                            className={`ml-2 transform transition-transform duration-300 ${
-                              isOpen ? "rotate-180" : "rotate-0"
-                            }`}
-                          >
-                          </span></button></li>
-                    </ul>
-                    {isOpen && (
-                        <div className="absolute right-0 mt-[-3%] w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
-                        <ul className="py-2 text-gray-700">
-                            <li>
-                            <a href="#" className="block px-4 py-2 hover:bg-gray-100 border-b-2">
-                                Profile
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#" className="block px-4 py-2 hover:bg-gray-100 border-b-2">
-                                Settings
-                            </a>
-                            </li>
-                            <li>
-                            <a href="#" className="block px-4 py-2 hover:bg-gray-100">
-                                Logout
-                            </a>
-                            </li>
-                        </ul>
-                        </div>
-                    )}
-                </div>
+                {user && (<NavLink to="/"><button onClick={handleClick} className="cursor-pointer bg-blue-400 px-6 py-3 rounded-lg text-black font-semibold">Logout</button></NavLink>)}
             </nav>
+        
+
+        
         </header>
     );
 }

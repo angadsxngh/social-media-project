@@ -14,20 +14,19 @@ datasource db {
 }
 
 model User {
-  id           String    @id @default(auto()) @map("_id") @db.ObjectId
-  name         String
-  username     String    @unique
-  email        String    @unique
-  password     String
-  number       String    @unique
-  pfp          String?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  followers    Int       @default(0)
-  following    Int       @default(0)
-  refreshToken String
-  posts        Int       @default(0)
-  Comment      Comment[]
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  username  String    @unique
+  email     String    @unique
+  password  String
+  number    String    @unique
+  pfp       String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  followers String[]
+  following String[]
+  posts     Post[]
+  comments  Comment[]
 }
 
 model Post {
@@ -37,8 +36,10 @@ model Post {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   authorId  String
-  likes     Int
+  likes     Int       @default(0)
   comments  Comment[]
+  User      User?     @relation(fields: [userId], references: [id])
+  userId    String?   @db.ObjectId
 }
 
 model Comment {
