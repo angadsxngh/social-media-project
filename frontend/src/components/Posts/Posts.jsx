@@ -32,7 +32,7 @@ export default function Posts({
       )}
 
       {!post.mediaUrl && (
-        <p className="mt-3 text-gray-300">{post.caption}</p>
+        <p className="text-gray-300 rounded-lg overflow-hidden w-fullh-40 lg:h-64">{post.caption}</p>
       )}
     </div>
     </NavLink>

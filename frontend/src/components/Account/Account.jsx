@@ -33,11 +33,7 @@ export default function Account() {
     setIsRotating(true);
     setTimeout(() => setIsRotating(false), 500);
   };
-
-  const handleClick = () => {
-    
-  }
-
+  
   useEffect(() => {
     refreshPosts(); 
   }, []);

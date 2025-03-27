@@ -33,7 +33,7 @@ export default function LoginWithEmail() {
 
         if (data.user) {  
           setUser(data.user);
-          navigate("/"); 
+          navigate("/Account"); 
         } else {
           console.error("User data missing from response");
         }

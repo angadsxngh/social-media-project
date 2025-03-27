@@ -27,6 +27,8 @@ const createNewPost = asyncHandler(async(req,res)=>{
 
     const mediaLocalPath = req.files?.media?.[0]?.path;
 
+    console.log(mediaLocalPath)
+
     // if(!mediaLocalPath){
     //     throw new ApiError(400, "file not uploaded")
     // }
@@ -45,7 +47,8 @@ const createNewPost = asyncHandler(async(req,res)=>{
         data:{
             authorId : userId,
             caption: caption,
-            mediaUrl: media.url
+            mediaUrl: media.url,
+            userId:userId
         }
     })
 
@@ -74,6 +77,24 @@ const getPosts = asyncHandler(async(req, res) => {
     res.send(posts)
 })
 
+const fetchUserPosts = asyncHandler(async(req, res) => {
+
+    const { userId } = req.params;
+
+    const posts = await prisma.post.findMany({
+        where:{
+            authorId:userId
+        },
+    })
+
+    if (!posts) {
+        return res.status(404).json({ message: "Posts not found" });
+      }
+  
+    console.log("posts: ",posts)
+
+    res.send(posts)
+})
 // const getPost = asyncHandler(async(req,res){
 
 // }) 
@@ -104,5 +125,6 @@ const deletePost = asyncHandler(async(req,res) => {
 export {
     createNewPost,
     getPosts,
+    fetchUserPosts,
     deletePost
 }

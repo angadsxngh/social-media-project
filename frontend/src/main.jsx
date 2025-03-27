@@ -18,6 +18,8 @@ import UpdatePassword from './components/Account/UpdatePassword.jsx'
 import DeleteAccount from './components/Account/DeleteAccount.jsx'
 import Card from './components/Card/Card.jsx'
 import CreatePost from './components/Posts/CreatePost.jsx'
+import FindUser from './components/Account/FindUser.jsx'
+import Profile from './components/Account/Profile.jsx'
 
 
 const router = createBrowserRouter(
@@ -37,6 +39,8 @@ const router = createBrowserRouter(
       <Route path='/Account' element={<Account/>}/>
       <Route path='/Card' element={<Card/>}/>
       <Route path='/create-post' element={<CreatePost/>}/>
+      <Route path='/find-user' element={<FindUser/>}/>
+      <Route path='/profile/:userid' element={<Profile/>}/>
     </Route>
   )
 )

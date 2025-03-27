@@ -4,20 +4,20 @@ const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
     const [user, setUser] = useState(() => {
-        // ✅ Load user from localStorage on initial render
         const storedUser = localStorage.getItem("user");
         return storedUser ? JSON.parse(storedUser) : null;
     });
 
-    const [posts, setPosts] = useState([])
+    const [posts, setPosts] = useState([]);
+    const [loading, setLoading] = useState(false); 
 
-    const [loading, setLoading] = useState(true);
+    const setGlobalLoading = (state) => {
+        setLoading(state);
+    };
 
-    // ✅ Fetch user data from API
     const fetchUser = async () => {
-        setLoading(true);
+        setGlobalLoading(true);  
         try {
-            
             const response = await fetch('/api/v1/users/get-user', {
                 method: "GET",
                 credentials: "include"
@@ -28,73 +28,73 @@ export const UserProvider = ({ children }) => {
             }
 
             const res = await response.json();
-
             setUser(res.user || null);
             if (res.user) {
-                localStorage.setItem("user", JSON.stringify(res.user)); // ✅ Store in localStorage
+                localStorage.setItem("user", JSON.stringify(res.user));
             }
         } catch (error) {
             console.error("Error fetching user:", error);
             setUser(null);
-            localStorage.removeItem("user"); // ✅ Clear if fetch fails
+            localStorage.removeItem("user");
         } finally {
-            setLoading(false);
+            setGlobalLoading(false); 
         }
     };
 
     const fetchPosts = async () => {
-        setLoading(true);
+        setGlobalLoading(true);  
         try {
             const response = await fetch("/api/v1/users/get-posts", {
-                method: 'GET',
+                method: "GET",
                 credentials: "include"
-            })
+            });
 
-            if(!response.ok){
-                throw new Error(`Failed to fetch posts: ${response.status}`)
+            if (!response.ok) {
+                throw new Error(`Failed to fetch posts: ${response.status}`);
             }
 
             const res = await response.json();
-
-
-            setPosts(res || null)
+            setPosts(res || []);
         } catch (error) {
-            console.error("Error fetching user:", error);
-            setPosts(null);
-        } finally{
-            setLoading(false);
+            console.error("Error fetching posts:", error);
+            setPosts([]);
+        } finally {
+            setGlobalLoading(false); 
         }
     };
 
-    // ✅ Runs once on mount
     useEffect(() => {
         fetchUser();
     }, []);
 
-    // ✅ Logout function (Clears localStorage & state)
+
     const logout = async () => {
+        setGlobalLoading(true); 
         try {
             await fetch("/api/v1/users/logout", {
                 method: "POST",
                 credentials: "include"
             });
-            console.log("User logged out successfully");
 
             setUser(null);
-            localStorage.removeItem("user"); // ✅ Ensure user data is removed
+            localStorage.removeItem("user");
         } catch (error) {
             console.error("Error logging out:", error);
+        } finally {
+            setGlobalLoading(false); 
         }
     };
 
     return (
-        <UserContext.Provider value={{ user, posts, setUser, loading, logout, refreshUser: fetchUser, refreshPosts: fetchPosts }}>
+        <UserContext.Provider value={{ 
+            user, posts, setUser, loading, setGlobalLoading, logout, 
+            refreshUser: fetchUser, refreshPosts: fetchPosts 
+        }}>
             {children}
         </UserContext.Provider>
     );
 };
 
-// ✅ Custom hook for easy access to UserContext
 export const useUser = () => {
     return useContext(UserContext);
 };

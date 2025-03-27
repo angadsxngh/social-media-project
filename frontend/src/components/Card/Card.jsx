@@ -35,9 +35,10 @@ export default function Card({ post }) {
   }
 
   return (
-    <div className="max-w-md w-full bg-[#111] p-2 border-white border rounded-lg shadow-lg text-white">
+    <div className="bg-black py-20 flex justify-center">
+    <div className="max-w-md w-full bg-[#111] p-2 border rounded-lg shadow-lg text-white">
       {usePost.mediaUrl && (
-        <div className="rounded-lg overflow-hidden flex items-center justify-center w-full bg-gray-800 h-40">
+        <div className="rounded-lg overflow-hidden flex items-center justify-center w-full bg-gray-800 h-64">
           <img src={usePost.mediaUrl} alt="Post" className="w-full h-64 object-cover" />
         </div>
       )}
@@ -80,6 +81,7 @@ export default function Card({ post }) {
           </ul>
         </div>
       )}
+    </div>
     </div>
   );
 }

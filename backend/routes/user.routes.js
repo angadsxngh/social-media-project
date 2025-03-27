@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { changePassword, deleteAccount, getUser, loginUser, logoutUser, refreshAccessToken, registerUser, updateAccountDetails, updatePfp } from "../controllers/user.controller.js";
+import { changePassword, deleteAccount, findUser, getUser, getUserProfile, loginUser, logoutUser, refreshAccessToken, registerUser, updateAccountDetails, updatePfp } from "../controllers/user.controller.js";
 import { upload } from "../middleware/multer.middleware.js";
 import { verifyJWT } from "../middleware/auth.middleware.js";
-import { createNewPost, deletePost, getPosts } from "../controllers/post.controller.js";
+import { createNewPost, deletePost, fetchUserPosts, getPosts } from "../controllers/post.controller.js";
 
 const router = Router();
 
@@ -42,6 +42,8 @@ router.route("/update-pfp").post(
 
 // router.route("/get-user").post(verifyJWT, getUser)
 
+router.get("/search", verifyJWT, findUser);
+
 router.get('/get-user', verifyJWT, getUser)
 
 router.route("/delete-account").post(verifyJWT, deleteAccount)
@@ -60,7 +62,9 @@ router.route('/get-posts').get(verifyJWT, getPosts)
 
 router.route('/delete-post').delete(verifyJWT,deletePost);
 
+router.get("/profile/:userId", verifyJWT, getUserProfile);
 
+// router.get('/profile/:userId', fetchUserPosts)
 
 
 export default router;

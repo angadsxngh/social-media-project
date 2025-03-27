@@ -160,6 +160,71 @@ const loginUser = asyncHandler(async(req, res) => {
 
 //secured
 
+const findUser = asyncHandler(async(req,res) => {
+
+    const { query } = req.query
+
+    if (!query || query.length < 3) {
+        console.log("Search query must be at least 3 characters long")
+        return res.status(400).json({ message: "Search query must be at least 3 characters long" });
+    }
+
+    if (!query) {
+        return res.status(400).json({ message: "Search query is required" });
+    }
+
+    try {
+        const users = await prisma.user.findMany({
+            where: {
+                OR: [
+                    { name: { contains: query, mode: "insensitive" } },
+                    { username: { contains: query, mode: "insensitive" } },
+                ],
+            },
+            select: {
+                id: true,
+                username: true,
+                pfp: true,
+            },
+        })
+
+        const validUsers = users.filter(user => {
+            return (
+                user.name?.toLowerCase().includes(query.toLowerCase()) ||
+                user.username?.toLowerCase().includes(query.toLowerCase())
+            );
+        });
+    
+        return res.json({ users: validUsers })
+    } catch (error) {
+        return res
+        .status(500)
+        .json({error})
+    }
+})
+
+const getUserProfile = asyncHandler(async (req, res) => {
+    const { userId } = req.params;
+  
+    const user = await prisma.user.findUnique({
+      where: { 
+        id: userId 
+    },
+      include: {
+        posts: true, 
+      },
+    });
+  
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    console.log("user: ",user)
+  
+    res.send(user);
+  });
+
+
 const logoutUser = asyncHandler(async(req,res) => {
 
     const options = {
@@ -384,5 +449,7 @@ export {
     updateAccountDetails,
     updatePfp,
     getUser,
-    deleteAccount
+    deleteAccount,
+    findUser,
+    getUserProfile
 }
