@@ -48,7 +48,7 @@ const createNewPost = asyncHandler(async(req,res)=>{
             authorId : userId,
             caption: caption,
             mediaUrl: media.url,
-            userId:userId
+            userId: userId
         }
     })
 

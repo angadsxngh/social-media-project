@@ -10,31 +10,32 @@ export default function FindUser() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setUsers([])
+    setUsers([]);
     setMessage("Find new people!");
-  }, [query])
+  }, [query]);
 
   async function handleSearch(e) {
     e.preventDefault();
     if (!query.trim()) return;
 
     setUsers([]);
-    console.log("users",users)
+    console.log("users", users);
     setMessage("Searching...");
     setLoading(true);
 
     try {
+      setUsers([...[]]);
 
-      setUsers([...[]]); 
-
-      const response = await fetch(`/api/v1/users/search?query=${encodeURIComponent(query)}`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      });
+      const response = await fetch(
+        `/api/v1/users/search?query=${encodeURIComponent(query)}`,
+        {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
 
       const data = await response.json();
       if (response.ok) {
-        
         setUsers(data.users || []);
         setMessage(data.users.length ? "" : "No users found");
       } else {
@@ -55,7 +56,7 @@ export default function FindUser() {
   return (
     <div className="bg-black min-h-screen flex flex-col items-center p-10 text-white">
       <h2 className="text-xl font-semibold mb-4">Find Users</h2>
-      
+
       <form onSubmit={handleSearch} className="flex gap-2 w-full max-w-md">
         <input
           type="text"
@@ -76,12 +77,15 @@ export default function FindUser() {
           )}
         </button>
       </form>
-      
+
       <div className="mt-6 w-full max-w-md">
         {users.length > 0 ? (
           <ul className="space-y-4">
             {users.map((user) => (
-              <li key={user.id} className="flex items-center justify-between bg-[#111] p-3 rounded-lg shadow-md">
+              <li
+                key={user.id}
+                className="flex items-center justify-between bg-[#111] p-3 rounded-lg shadow-md"
+              >
                 <div className="flex items-center gap-3">
                   <img
                     src={user.pfp}
@@ -100,7 +104,9 @@ export default function FindUser() {
             ))}
           </ul>
         ) : (
-          <p className="text-gray-400 mt-4 absolute left-[50%] translate-x-[-50%]">{message}</p>
+          <p className="text-gray-400 mt-4 absolute left-[50%] translate-x-[-50%]">
+            {message}
+          </p>
         )}
       </div>
     </div>

@@ -10,7 +10,7 @@ export default function CreatePost() {
   const [form, setForm] = useState({
     caption: "",
     media: ""
-  });
+  }); 
 
   function handleMediaChange(e) {
     const file = e.target.files[0];

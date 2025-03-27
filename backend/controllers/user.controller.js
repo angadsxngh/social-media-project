@@ -46,19 +46,24 @@ const registerUser = asyncHandler(async(req,res) => {
         throw new ApiError(409, "user with number already exists")
     }
 
-    const pfpLocalPath = req.files?.pfp[0]?.path;
+    const pfpLocalPath = req.files?.pfp?.[0]?.path;
 
 
     // console.log(pfpLocalPath);
-    if(!pfpLocalPath){
-        throw new ApiError(400, "file not uploaded")
-    }
+    // if(!pfpLocalPath){
+    //     throw new ApiError(400, "file not uploaded")
+    // }
+
+    const pfp = ""
     
-    const pfp = await uploadOnCloudinary(pfpLocalPath)
-    if(!pfp){
-       throw new ApiError(400, "error uploading profile picture on cloudinary")
+    if(pfpLocalPath){
+        pfp = await uploadOnCloudinary(pfpLocalPath)
+        if(!pfp){
+            throw new ApiError(400, "error uploading profile picture on cloudinary")
     }    
 
+    }
+    
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // const tempUser = { id: crypto.randomUUID() }
@@ -103,7 +108,7 @@ const registerUser = asyncHandler(async(req,res) => {
     .cookie("refreshToken", refreshToken, options)
     .cookie("accessToken", accessToken, options)
 
-    return res.send()
+    return res.send(createdUser)
     
 })
 
@@ -374,7 +379,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 
 const updatePfp = asyncHandler(async(req,res) => {
 
-    const pfpLocalPath = req.files?.pfp[0]?.path;
+    const pfpLocalPath = req.files?.pfp?.[0]?.path;
 
     if(!pfpLocalPath){
         throw new ApiError(400, "Pfp file is missing")
@@ -396,8 +401,7 @@ const updatePfp = asyncHandler(async(req,res) => {
     })
 
     return res
-    .status(200)
-    .json(new ApiResponse(200, user, "Pfp updated succesfully"))
+    .send()
 
 })
 
@@ -424,6 +428,7 @@ const deleteAccount = asyncHandler(async(req, res) => {
     const isPasswordValid = await bcrypt.compare(password, user.password)
 
     if(!isPasswordValid){
+        console.log("password is incorrect")
         throw new ApiError(400, "Password is incorrect")
     }
 
@@ -433,11 +438,16 @@ const deleteAccount = asyncHandler(async(req, res) => {
         }
     })
 
-    return res
-    .status(200)
+    const options = {
+        httpOnly: true,
+        secure: true
+    }
+
+    res
     .clearCookie("accessToken", options)
     .clearCookie("refreshToken", options)
-    .json(new ApiResponse(200, {}, "Account deleted"))
+
+    res.send("Account deleted succefully")
 })
 
 export {

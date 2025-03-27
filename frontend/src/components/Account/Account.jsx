@@ -10,7 +10,7 @@ import { Navigate } from "react-router-dom";
 const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/3177/3177440.png";
 
 export default function Account() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const { user, posts, refreshPosts } = useUser();
   const {
     name = "No Name",
@@ -33,9 +33,9 @@ export default function Account() {
     setIsRotating(true);
     setTimeout(() => setIsRotating(false), 500);
   };
-  
+
   useEffect(() => {
-    refreshPosts(); 
+    refreshPosts();
   }, []);
 
   return (
@@ -70,13 +70,17 @@ export default function Account() {
             <p>Following</p>
           </div>
           <div>
-            <NavLink to='/create-post'>
-              <button className="cursor-pointer bg-blue-400 mt-5 w-full px-3 py-1 rounded-lg text-black font-semibold">New Post</button>
+            <NavLink to="/create-post">
+              <button className="cursor-pointer bg-blue-400 mt-5 w-full px-3 py-1 rounded-lg text-black font-semibold">
+                New Post
+              </button>
             </NavLink>
           </div>
           <div>
-            <NavLink to='/update-account'>
-              <button className="cursor-pointer bg-blue-400 mt-5 w-full px-3 py-1 rounded-lg text-black font-semibold order-last">Edit Profile</button>
+            <NavLink to="/update-account">
+              <button className="cursor-pointer bg-blue-400 mt-5 w-full px-3 py-1 rounded-lg text-black font-semibold order-last">
+                Edit Profile
+              </button>
             </NavLink>
           </div>
           {/*  FUTURE FUNCTIONALITY 
@@ -96,15 +100,17 @@ export default function Account() {
               //   key={index}
               //   post={post}
               // />
-              <Posts 
-                key={index}
-                post={post}
-              />
+              <Posts key={index} post={post} />
             ))}
           </div>
         ) : (
           <div className="">
-            <p className="text-gray-500 text-center">No posts uploaded yet. <a className="underline text-blue-400" href="/create-post">Add a post?</a></p>
+            <p className="text-gray-500 text-center">
+              No posts uploaded yet.{" "}
+              <a className="underline text-blue-400" href="/create-post">
+                Add a post?
+              </a>
+            </p>
           </div>
         )}
       </div>

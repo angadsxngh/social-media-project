@@ -1,18 +1,24 @@
 import React, { useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Trash2 } from "lucide-react"; // Importing Trash Can Icon
+import { useUser } from "../../context/UserContext"; 
 
 export default function Signup() {
+
+  const { setUser } = useUser()
+  const navigate = useNavigate()
+  const [pfp, setPfp] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     name: "",
     username: "",
     email: "",
-    phone: "",
+    number: "",
     password: "",
-    profilePicture: null,
+    pfp: null,
   });
 
-  const fileInputRef = useRef(null); // Ref for file input
+  const fileInputRef = useRef(null); // Ref for file input 
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -20,19 +26,56 @@ export default function Signup() {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    setForm({ ...form, profilePicture: file });
+    if (file) {
+      setPfp(URL.createObjectURL(file));
+      setForm({ ...form, [e.target.name]: file });
+    }
   };
 
   const handleDeleteFile = () => {
-    setForm({ ...form, profilePicture: null });
+    setForm({ ...form, pfp: null });
     if (fileInputRef.current) {
       fileInputRef.current.value = ""; // Reset input field
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true)
     console.log("User Data:", form);
+
+    const formData = new FormData();
+    formData.append("name", form.name);
+    formData.append("email", form.email);
+    formData.append("username", form.username);
+    formData.append("number", form.number);
+    formData.append("password", form.password);
+    formData.append("pfp", form.pfp);
+
+    try {
+      const response = await fetch("/api/v1/users/register", {
+        method: "POST",
+        body: formData,
+        credentials: "include"
+      });
+      console.log(response)
+
+      if(response.ok){
+        const data = await response.json();
+        console.log("Account created: ", data)
+
+        if(data){
+          setUser(data)
+          navigate('/Account')
+        } else{
+          console.log("user data is missing from response")
+        }
+      }
+    } catch (error) {
+      console.error("error creating account:", error);
+    } finally{
+      setLoading(false)
+    }
   };
 
   return (
@@ -71,9 +114,9 @@ export default function Signup() {
           />
           <input
             type="tel"
-            name="phone"
+            name="number"
             placeholder="Phone Number"
-            value={form.phone}
+            value={form.number}
             onChange={handleChange}
             className="w-full p-3 rounded-lg bg-[#222] text-white border border-gray-700 focus:ring-2 focus:ring-blue-400"
             required
@@ -95,16 +138,16 @@ export default function Signup() {
               <input
                 type="file"
                 accept="image/*"
-                ref={fileInputRef} // File input reference
+                name="pfp"
                 onChange={handleFileChange}
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
               />
               <div className="w-full p-3 bg-[#222] text-gray-400 text-center rounded-lg border border-gray-700 cursor-pointer hover:bg-blue-400 hover:text-black transition-all">
-                {form.profilePicture ? form.profilePicture.name : "Upload Profile Picture"}
+                {form.pfp ? form.pfp.name : "Upload Profile Picture"}
               </div>
 
               {/* Trash Can Delete Button (Visible When File is Selected) */}
-              {form.profilePicture && (
+              {form.pfp && (
                 <button
                   type="button"
                   onClick={handleDeleteFile}

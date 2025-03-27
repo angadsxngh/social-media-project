@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
+import { useUser } from "../../context/UserContext";
+import { useNavigate } from "react-router-dom";
 
 export default function LoginWithUsername() {
+  const navigate = useNavigate()
+  const { setUser } = useUser()
   const [form, setForm] = useState({
     username: "",
     password: "",
@@ -11,9 +15,36 @@ export default function LoginWithUsername() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Logging in with:", form);
+
+    try {
+      const res = await fetch('/api/v1/users/login', {
+        method: 'POST',
+        headers: {
+          "Content-type": 'application/json'
+        },
+        credentials: "include",
+        body: JSON.stringify(form)
+      })
+  
+      if(res.ok){
+        const data = await res.json();
+        console.log("logged in user: ", data)
+  
+        if(data.user){
+          setUser(data.user)
+          navigate('/Account')
+        }
+      } else{
+        console.log("login failed")
+      }
+    } catch (error) {
+      console.log("login error ", error)
+    }
+
+
   };
 
   return (
