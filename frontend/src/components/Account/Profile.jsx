@@ -1,17 +1,46 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Posts from "../Posts/Posts";
+import { useUser } from "../../context/UserContext";
+import { useNavigate } from "react-router-dom";
+
 
 export default function Profile() {
+  const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/3177/3177440.png";
   const params = useParams();
-
+  const { user } = useUser();
   //   console.log(userid)
-  const [user, setUser] = useState(null);
+  const [userr, setUserr] = useState(null);
   const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState([]);
   const [error, setError] = useState("");
+  const [following, setFollowing] = useState(false);
+  const navigate = useNavigate()
+
+  const handleClick = async () => {
+    console.log("button clicked");
+
+    const response = await fetch(`/api/v1/users/follow/${params.userid}`, {
+      method: "POST",
+    });
+
+    console.log(response);
+
+    if (response.ok) {
+      setFollowing(!following);
+
+      setUserr((prevUser) => ({
+        ...prevUser,
+        followers: following 
+        ?  prevUser.followers.filter((id) => id !== user.id) 
+        : [...prevUser.followers, user.id],
+      }))
+    }
+  };
 
   useEffect(() => {
+    console.log("logged in user",user)
+
     async function fetchUser() {
       try {
         const response = await fetch(`/api/v1/users/profile/${params.userid}`, {
@@ -21,14 +50,24 @@ export default function Profile() {
           },
         });
 
-        console.log(posts);
+        console.log(response);
 
         const data = await response.json();
+
+        console.log(data);
+        console.log("following: ", data.following);
+        console.log("followers: ", data.followers);
+
+        if (data.followers.includes(user.id)) {
+          setFollowing(true);
+        } else {
+          setFollowing(false);
+        }
 
         if (!response.ok)
           throw new Error(data.message || "Failed to load user");
 
-        setUser(data);
+        setUserr(data);
       } catch (err) {
         console.log(err);
         setError(err.message);
@@ -49,31 +88,53 @@ export default function Profile() {
 
   return (
     <div className="bg-black min-h-screen flex flex-col items-center p-10 text-white">
-      <div className="bg-[#111] p-6 rounded-lg shadow-lg w-full max-w-md text-center">
+      <div className="bg-[#111] pl-6 pr-3 pb-6 pt-3 rounded-lg shadow-lg w-full max-w-md text-center">
+        {!following && (
+          <div className="flex justify-end">
+            <button
+              onClick={handleClick}
+              className="cursor-pointer bg-blue-400 px-3 py-1 rounded-lg text-black font-semibold"
+            >
+              Follow
+            </button>
+          </div>
+        )}
+
+        {following && (
+          <div className="flex justify-end">
+            <button
+              onClick={handleClick}
+              className="cursor-pointer bg-white px-3 py-1 rounded-lg text-black font-semibold"
+            >
+              Following
+            </button>
+          </div>
+        )}
         <img
-          src={user.pfp || "/default-avatar.png"}
-          alt={user.username}
+          src={userr.pfp || defaultAvatar}
+          alt={userr.username}
           className="w-24 h-24 rounded-full object-cover mx-auto"
         />
-        <h2 className="text-2xl font-semibold mt-3">{user.name}</h2>
-        <p className="text-gray-400">@{user.username}</p>
+
+        <h2 className="text-2xl font-semibold mt-3">{userr.name}</h2>
+        <p className="text-gray-400">@{userr.username}</p>
 
         <div className="mt-5 flex justify-around text-sm text-gray-300">
           <div>
             <p className="font-semibold">
-              {user ? user.posts.length : "no user"}
+              {userr ? userr.posts.length : "no user"}
             </p>
             <p>Posts</p>
           </div>
           <div>
             <p className="font-semibold">
-              {user ? user.followers.length : "no user"}
+              {userr ? userr.followers.length : "no user"}
             </p>
             <p>Followers</p>
           </div>
           <div>
             <p className="font-semibold">
-              {user ? user.following.length : "no user"}
+              {userr ? userr.following.length : "no user"}
             </p>
             <p>Following</p>
           </div>
@@ -82,9 +143,9 @@ export default function Profile() {
 
       <div className="mt-6 lg:px-20 w-full">
         <h3 className="text-lg font-semibold mb-3">Posts</h3>
-        {user.posts.length > 0 ? (
+        {userr.posts.length > 0 ? (
           <div className="grid grid-cols-3 gap-1 lg:gap-4 px">
-            {user.posts.map((post) => (
+            {userr.posts.map((post) => (
               <div key={post.id} className="bg-[#222] rounded-lg shadow-md">
                 <Posts post={post} />
               </div>

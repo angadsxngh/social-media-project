@@ -25,6 +25,5 @@ app.listen(3000, ()=> {
 })
 
 app.use('/api/v1/users', userRouter)
-// app.use('api/v1/posts', postRouter)
 
 export {app}

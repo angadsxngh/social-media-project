@@ -77,12 +77,11 @@ const registerUser = asyncHandler(async(req,res) => {
             password: hashedPassword,
             number: number,
             pfp: pfp.url,    
-            // refreshToken: refreshToken
+            // refreshToken: refreshTokens
         }
     })
 
     console.log(user);
-    
 
     const accessToken = await generateAccessToken(user)
     const refreshToken = await generateRefreshToken(user)
@@ -229,6 +228,70 @@ const getUserProfile = asyncHandler(async (req, res) => {
     res.send(user);
   });
 
+  const followUser = asyncHandler(async (req, res) => {
+    const { userId } = req.params; // The user being followed
+    const loggedInUserId = req.user.id; // Extracted from auth middleware
+
+    if (!userId || !loggedInUserId) {
+        return res.status(400).json({ message: "Invalid user data" });
+    }
+
+    if (userId === loggedInUserId) {
+        return res.status(400).json({ message: "You cannot follow yourself" });
+    }
+
+    try {
+        // Fetch both users
+        const loggedInUser = await prisma.user.findUnique({ where: { id: loggedInUserId } });
+        const targetUser = await prisma.user.findUnique({ where: { id: userId } });
+
+        if (!loggedInUser || !targetUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // Check if already following
+        const isFollowing = loggedInUser.following.includes(userId);
+
+        if (isFollowing) {
+            // Unfollow the user
+            await prisma.user.update({
+                where: { id: loggedInUserId },
+                data: {
+                    following: { set: loggedInUser.following.filter(id => id !== userId) }
+                }
+            });
+
+            await prisma.user.update({
+                where: { id: userId },
+                data: {
+                    followers: { set: targetUser.followers.filter(id => id !== loggedInUserId) }
+                }
+            });
+
+            return res.status(200).json({ message: "User unfollowed successfully" });
+        } else {
+            // Follow the user
+            await prisma.user.update({
+                where: { id: loggedInUserId },
+                data: {
+                    following: { set: [...loggedInUser.following, userId] }
+                }
+            });
+
+            await prisma.user.update({
+                where: { id: userId },
+                data: {
+                    followers: { set: [...targetUser.followers, loggedInUserId] }
+                }
+            });
+
+            return res.status(200).json({ message: "User followed successfully" });
+        }
+    } catch (error) {
+        console.error("Follow error:", error);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+});
 
 const logoutUser = asyncHandler(async(req,res) => {
 
@@ -461,5 +524,6 @@ export {
     getUser,
     deleteAccount,
     findUser,
-    getUserProfile
+    getUserProfile,
+    followUser
 }

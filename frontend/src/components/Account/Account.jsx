@@ -62,11 +62,11 @@ export default function Account() {
             <p>Posts</p>
           </div>
           <div>
-            <p className="text-lg font-bold">{followers}</p>
+            <p className="text-lg font-bold">{followers.length}</p>
             <p>Followers</p>
           </div>
           <div>
-            <p className="text-lg font-bold">{following}</p>
+            <p className="text-lg font-bold">{following.length}</p>
             <p>Following</p>
           </div>
           <div>
