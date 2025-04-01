@@ -99,6 +99,62 @@ const fetchUserPosts = asyncHandler(async(req, res) => {
 
 // }) 
 
+const likePost = asyncHandler(async(req, res) => {
+
+    const userid = req.user.id
+    const postid = req.body.postid
+
+    console.log("user id: ", userid)
+    console.log("post id: ", postid)
+
+    if(!userid){
+        throw new ApiError(400, "User Id is invalid")
+    }
+
+    if(!postid){
+        throw new ApiError(400, "Post id is invalid")
+    }
+
+    try {
+        // const user = await prisma.user.findUnique({ where: {id: userId}})
+        const post = await prisma.post.findUnique({ where: {id: postid}})
+    
+        if(!post){
+            throw new ApiError(404, "user or post is missing")
+        }
+    
+        const isLiked = post.likes.includes(userid)
+    
+        if(isLiked){
+            //unlike the post
+            await prisma.post.update({
+                where: {
+                    id: postid
+                },
+                data: {
+                    likes: {set: post.likes.filter(id => id !== userid)}
+                }
+            })
+    
+            return res.status(200).json({ message: "post unliked succesfully"})
+        } else{
+            //like the post
+            await prisma.post.update({
+                where: {
+                    id: postid
+                },
+                data: {
+                    likes: {set: [...post.likes, userid]}
+                }
+            })
+            return res.status(200).json( {message: 'post liked succesfully'} )
+        }
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json( {message: "Internal server error"} )
+    }
+})
+
 const deletePost = asyncHandler(async(req,res) => {
     
     const {postid}=req.body;
@@ -122,9 +178,29 @@ const deletePost = asyncHandler(async(req,res) => {
     }
 })
 
+const getPost = asyncHandler( async(req, res) => {
+    const postid = req.params
+
+    const post = await prisma.post.findUnique({
+        where:{
+            id: postid
+        }
+    })
+
+    if(!post){
+        throw new ApiError(400, "Post is not defined")
+    }
+
+    return res
+    .status(200)
+    .send(post)
+})
+
 export {
     createNewPost,
     getPosts,
     fetchUserPosts,
-    deletePost
+    deletePost,
+    likePost,
+    getPost
 }

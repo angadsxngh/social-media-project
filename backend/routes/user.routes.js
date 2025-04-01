@@ -2,7 +2,7 @@ import { Router } from "express";
 import { changePassword, deleteAccount, findUser, followUser, getUser, getUserProfile, loginUser, logoutUser, refreshAccessToken, registerUser, updateAccountDetails, updatePfp } from "../controllers/user.controller.js";
 import { upload } from "../middleware/multer.middleware.js";
 import { verifyJWT } from "../middleware/auth.middleware.js";
-import { createNewPost, deletePost, fetchUserPosts, getPosts } from "../controllers/post.controller.js";
+import { createNewPost, deletePost, fetchUserPosts, getPost, getPosts, likePost } from "../controllers/post.controller.js";
 
 const router = Router();
 
@@ -17,8 +17,6 @@ router.route("/register").post(
 )
 
 router.route("/login").post(loginUser)
-
-
 
 //secured routes
 
@@ -62,11 +60,15 @@ router.route('/get-posts').get(verifyJWT, getPosts)
 
 router.route('/delete-post').delete(verifyJWT,deletePost);
 
+router.route('/likePost').post(verifyJWT, likePost)
+
 router.get("/profile/:userId", verifyJWT, getUserProfile);
 
 // router.get('/profile/:userId', fetchUserPosts)
 
 router.post('/follow/:userId', verifyJWT, followUser)
+
+router.get('/posts/:postId', verifyJWT, getPost)
 
 
 export default router;

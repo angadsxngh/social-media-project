@@ -19,7 +19,7 @@ export default function Posts({
 
   const handleClick =() => 
     {console.log("Post clicked!", post)
-    navigate('/Card', {state: post})
+    navigate('/Card', {state: post}) 
   }
 
   return (

@@ -162,7 +162,7 @@ const loginUser = asyncHandler(async(req, res) => {
     
 })
 
-//secured
+//secured 
 
 const findUser = asyncHandler(async(req,res) => {
 
@@ -228,7 +228,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
     res.send(user);
   });
 
-  const followUser = asyncHandler(async (req, res) => {
+const followUser = asyncHandler(async (req, res) => {
     const { userId } = req.params; // The user being followed
     const loggedInUserId = req.user.id; // Extracted from auth middleware
 

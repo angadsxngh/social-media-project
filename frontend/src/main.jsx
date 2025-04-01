@@ -38,6 +38,7 @@ const router = createBrowserRouter(
       <Route path='/Messages' element={<Messages/>}/>
       <Route path='/Account' element={<Account/>}/>
       <Route path='/Card' element={<Card/>}/>
+      {/* <Route path='/posts/:postId' element={<Card/>}/> */}
       <Route path='/create-post' element={<CreatePost/>}/>
       <Route path='/find-user' element={<FindUser/>}/>
       <Route path='/profile/:userid' element={<Profile/>}/>

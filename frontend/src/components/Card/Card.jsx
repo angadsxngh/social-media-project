@@ -3,13 +3,40 @@ import { FaHeart, FaRegComment, FaTrash } from "react-icons/fa";
 import { useUser } from "../../context/UserContext.jsx";
 import { useNavigate, useLocation } from "react-router-dom";
 
-export default function Card({ post }) {
+export default function Card() {
   const navigate = useNavigate();
   const location = useLocation();
-  const usePost = location.state || {};
+  const usePost = location.state || { likes: [], comments: [], mediaUrl: "", caption: "" };
   const { user } = useUser();
   const [showComments, setShowComments] = useState(false);
   const isOwner = user?.id === usePost.authorId;
+  const [post, setPost] = useState(usePost || { likes: [] })
+  const [isLiked, setIsLiked] = useState(false)
+
+  const handleLike = async () => {
+    console.log("post liked")
+
+    const response = await fetch('/api/v1/users/likePost', {
+      method: 'POST',
+      headers: { "Content-type": "application/json" },
+      body: JSON.stringify({ postid: usePost.id }),
+      credentials: 'include'
+    });
+  
+    if (response.ok) {
+      const res = await response.json();
+      console.log("Post details:", usePost);
+      console.log("response:", res);
+
+      setPost((prevPost) => ({
+        ...prevPost,
+        likes: res.likes
+      }));
+      setIsLiked(res.likes.includes(user.id));
+    } else {
+      console.log("Failed to like/unlike post");
+    }
+  }
 
   async function handleDelete() {
     if (!usePost.id) return;
@@ -34,6 +61,16 @@ export default function Card({ post }) {
     }
   }
 
+  useEffect(() => {
+    async function fetchPost() {
+      try {
+        const response = await fetch(`/api/v1/posts/${params.postId}`)
+      } catch (error) {
+        
+      }
+    }
+  })
+
   return (
     <div className="bg-black py-20 flex justify-center">
     <div className="max-w-md w-full bg-[#111] p-2 border rounded-lg shadow-lg text-white">
@@ -47,8 +84,8 @@ export default function Card({ post }) {
 
       <div className="flex items-center justify-between mt-4">
         <div className="flex items-center gap-4">
-          <button className="flex items-center gap-1 hover:text-red-500">
-            <FaHeart className="text-red-400" /> {usePost.likes || 0}
+          <button onClick={handleLike} className="flex items-center gap-1 hover:text-red-500">
+            <FaHeart className="text-red-400" /> {post.likes?.length}
           </button>
           <button onClick={() => setShowComments(!showComments)} className="flex items-center gap-1 hover:text-blue-400">
             <FaRegComment /> {usePost.comments ? usePost.comments.length : 0}
