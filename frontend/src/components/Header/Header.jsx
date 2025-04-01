@@ -40,7 +40,6 @@ export default function Header() {
                     <ul className="hidden md:flex gap-6">
                     <NavLink to="/Posts" className={({isActive}) => `${isActive?"text-blue-500":"text-white"}`}><button href="#" className="hover:text-blue-500">Posts</button></NavLink>
                     <NavLink to="/find-user" className={({isActive}) => `${isActive?"text-blue-500":"text-white"}`}><button href="#" className="hover:text-blue-500">Find</button></NavLink>
-                    <NavLink to="/Messages" className={({isActive}) => `${isActive?"text-blue-500":"text-white"}`}><button href="#" className="hover:text-blue-500">Messages</button></NavLink>
                     <NavLink to="/Account" className={({isActive}) => `${isActive?"text-blue-500":"text-white"}`}><button href="#" className="hover:text-blue-500">Profile</button></NavLink>
                 </ul>
         )}

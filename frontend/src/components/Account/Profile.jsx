@@ -142,11 +142,11 @@ export default function Profile() {
       </div>
 
       <div className="mt-6 lg:px-20 w-full">
-        <h3 className="text-lg font-semibold mb-3">Posts</h3>
+        <h3 className="text-xl font-semibold text-center mb-4">Posts</h3>
         {userr.posts.length > 0 ? (
-          <div className="grid grid-cols-3 gap-1 lg:gap-4 px">
+          <div className="grid grid-cols-3 gap-1 lg:gap-4 px-2">
             {userr.posts.map((post) => (
-              <div key={post.id} className="bg-[#222] rounded-lg shadow-md">
+              <div key={post.id} className="bg-black rounded-lg shadow-md">
                 <Posts post={post} />
               </div>
             ))}

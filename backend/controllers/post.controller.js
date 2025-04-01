@@ -127,7 +127,7 @@ const likePost = asyncHandler(async(req, res) => {
     
         if(isLiked){
             //unlike the post
-            await prisma.post.update({
+            const update = await prisma.post.update({
                 where: {
                     id: postid
                 },
@@ -136,10 +136,10 @@ const likePost = asyncHandler(async(req, res) => {
                 }
             })
     
-            return res.status(200).json({ message: "post unliked succesfully"})
+            return res.status(200).json({ message: "post unliked succesfully",post:update})
         } else{
             //like the post
-            await prisma.post.update({
+            const update=await prisma.post.update({
                 where: {
                     id: postid
                 },
@@ -147,7 +147,8 @@ const likePost = asyncHandler(async(req, res) => {
                     likes: {set: [...post.likes, userid]}
                 }
             })
-            return res.status(200).json( {message: 'post liked succesfully'} )
+            return res.status(200).json( {message: 'post liked succesfully',post:update} )
+            // res.send()
         }
     } catch (error) {
         console.log(error)
@@ -202,5 +203,5 @@ export {
     fetchUserPosts,
     deletePost,
     likePost,
-    getPost
+    getPost,
 }

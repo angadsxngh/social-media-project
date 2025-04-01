@@ -215,7 +215,11 @@ const getUserProfile = asyncHandler(async (req, res) => {
         id: userId 
     },
       include: {
-        posts: true, 
+        posts: {
+            include:{
+                comments:true
+            }
+        }, 
       },
     });
   

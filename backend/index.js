@@ -7,7 +7,7 @@ import userRouter from './routes/user.routes.js';
 import cookieParser from 'cookie-parser';
 
 const app = express();
-
+const PORT=process.env.PORT || 3000;
 const prisma=new PrismaClient();
 
 app.use(cors({
@@ -21,7 +21,7 @@ app.use(cookieParser())
 app.use(bodyParser.json())
 
 app.listen(3000, ()=> {
-    console.log("server running on port 3000");
+    console.log("server running on port ",PORT);
 })
 
 app.use('/api/v1/users', userRouter)

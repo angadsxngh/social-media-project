@@ -96,10 +96,6 @@ export default function Account() {
         {posts.length > 0 ? (
           <div className="grid grid-cols-3 gap-1 lg:gap-4 px-2">
             {posts.map((post, index) => (
-              // <MediaCard
-              //   key={index}
-              //   post={post}
-              // />
               <Posts key={index} post={post} />
             ))}
           </div>

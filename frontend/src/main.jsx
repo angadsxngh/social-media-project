@@ -35,7 +35,7 @@ const router = createBrowserRouter(
       <Route path='/delete-account' element={<DeleteAccount/>} />
       <Route path='/SignUp' element={<SignUp/>}/>
       <Route path='/Posts' element={<Posts/>}/>
-      <Route path='/Messages' element={<Messages/>}/>
+      {/* <Route path='/Messages' element={<Messages/>}/> */}
       <Route path='/Account' element={<Account/>}/>
       <Route path='/Card' element={<Card/>}/>
       {/* <Route path='/posts/:postId' element={<Card/>}/> */}

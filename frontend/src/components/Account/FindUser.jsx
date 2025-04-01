@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function FindUser() {
+  const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/3177/3177440.png";
   const [query, setQuery] = useState("");
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -88,7 +89,8 @@ export default function FindUser() {
               >
                 <div className="flex items-center gap-3">
                   <img
-                    src={user.pfp}
+                    src={user.pfp || defaultAvatar
+                    }
                     alt={user.username}
                     className="w-10 h-10 rounded-full object-cover"
                   />
