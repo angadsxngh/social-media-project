@@ -8,9 +8,11 @@ import menu from "../../images/hamburger.png"
 import logo from "../../images/twitter.png"
 import { useUser } from "../../context/UserContext";
 import { useContext } from "react";
+import  ToasterUi  from "toaster-ui";
 
 export default function Header() {
 
+    const toaster = new ToasterUi()
     const { user, logout } = useUser();
     
     const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -22,7 +24,8 @@ export default function Header() {
     const handleClick = async () => {
         if(logout){
             await logout()
-        setIsLoggedIn(false)
+            toaster.addToast("Logged out succesfully", "success")
+            setIsLoggedIn(false)
         }
         else{
             console.log("logout function is undefined");
@@ -44,7 +47,12 @@ export default function Header() {
                 </ul>
         )}
 
-                {!user && (<NavLink to="SignUp"><button className="cursor-pointer bg-blue-400 px-6 py-3 rounded-lg text-black font-semibold">Sign Up</button></NavLink>)}
+                {!user && (
+                    <div className="flex gap-3">
+                        <NavLink to="/Login-username"><button className="cursor-pointer bg-blue-400 px-6 py-3 rounded-lg text-black font-semibold">Login</button></NavLink>
+                        <NavLink to="/SignUp"><button className="cursor-pointer hidden lg:inline bg-black border px-6 py-3 rounded-lg text-blue-400 font-semibold">Sign Up</button></NavLink>
+                    </div>
+                    )}
 
                 {user && (<NavLink to="/"><button onClick={handleClick} className="cursor-pointer bg-blue-400 px-6 py-3 rounded-lg text-black font-semibold">Logout</button></NavLink>)}
             </nav>

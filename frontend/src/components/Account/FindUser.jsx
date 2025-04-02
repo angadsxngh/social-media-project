@@ -69,7 +69,7 @@ export default function FindUser() {
         <button
           type="submit"
           disabled={loading}
-          className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center justify-center disabled:bg-blue-400"
+          className="bg-blue-600 cursor-pointer hover:bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center justify-center disabled:bg-blue-400"
         >
           {loading ? (
             <div className="w-5 h-5 border-2 border-gray-300 border-t-white rounded-full animate-spin"></div>
@@ -98,7 +98,7 @@ export default function FindUser() {
                 </div>
                 <button
                   onClick={() => handleClick(user.id)}
-                  className="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded-lg"
+                  className="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded-lg cursor-pointer"
                 >
                   View
                 </button>

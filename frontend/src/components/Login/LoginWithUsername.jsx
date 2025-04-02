@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { useUser } from "../../context/UserContext";
 import { useNavigate } from "react-router-dom";
+import ToasterUi from 'toaster-ui'
 
 export default function LoginWithUsername() {
+  const toaster = new ToasterUi()
   const navigate = useNavigate()
   const { setUser } = useUser()
   const [form, setForm] = useState({
@@ -17,7 +19,6 @@ export default function LoginWithUsername() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Logging in with:", form);
 
     try {
       const res = await fetch('/api/v1/users/login', {
@@ -31,17 +32,19 @@ export default function LoginWithUsername() {
   
       if(res.ok){
         const data = await res.json();
-        console.log("logged in user: ", data)
   
         if(data.user){
           setUser(data.user)
+          toaster.addToast("Login successfull", "success")
           navigate('/Account')
+        } else{
+          toaster.addToast("Username and password do not match", "error")
         }
       } else{
-        console.log("login failed")
+        toaster.addToast("Username and password do not match", "error")
       }
     } catch (error) {
-      console.log("login error ", error)
+      toaster.addToast("Please contact administrator or try again later", "error")
     }
 
 

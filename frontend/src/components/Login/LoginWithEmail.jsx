@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useUser } from "../../context/UserContext";
+import ToasterUi from "toaster-ui";
 
 export default function LoginWithEmail() {
+  const toaster = new ToasterUi()
   const { setUser } = useUser();  // ✅ Get setUser from context
   const navigate = useNavigate();
 
@@ -33,15 +35,17 @@ export default function LoginWithEmail() {
 
         if (data.user) {  
           setUser(data.user);
+          toaster.addToast("Login successfull", "success")
           navigate("/Account"); 
         } else {
+          toaster.addToast("email and password do not match", "error")
           console.error("User data missing from response");
         }
       } else {
-        console.error("Login failed:", res.status);
+        toaster.addToast("email and password do not match", "error")
       }
     } catch (error) {
-      console.error("Error during login:", error);
+      toaster.addToast("Please contact administrator or try again later", "error")
     }
   };
 

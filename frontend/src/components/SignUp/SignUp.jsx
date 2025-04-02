@@ -2,9 +2,10 @@ import React, { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Trash2 } from "lucide-react"; // Importing Trash Can Icon
 import { useUser } from "../../context/UserContext"; 
-
+import ToasterUi from 'toaster-ui'
 export default function Signup() {
 
+  const toaster = new ToasterUi()
   const { setUser } = useUser()
   const navigate = useNavigate()
   const [pfp, setPfp] = useState(null);
@@ -66,12 +67,18 @@ export default function Signup() {
 
         if(data){
           setUser(data)
+          const toast = toaster.addToast("Account registered successfully", "success")
           navigate('/Account')
         } else{
           console.log("user data is missing from response")
+          const toast = toaster.addToast("User with email or username already exists", "error")
         }
+      } else {
+        toaster.addToast("Invalid username or password", "error")
+        console.error("Login failed:", res.status);
       }
     } catch (error) {
+      // const toast = toaster.addToast("User with email or username already exists", "error")
       console.error("error creating account:", error);
     } finally{
       setLoading(false)

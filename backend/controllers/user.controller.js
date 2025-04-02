@@ -499,6 +499,23 @@ const deleteAccount = asyncHandler(async(req, res) => {
         throw new ApiError(400, "Password is incorrect")
     }
 
+    await prisma.comment.deleteMany({
+        where: {
+          postId: {
+            in: (await prisma.post.findMany({
+              where: { authorId: "67eaf85b45114c160e454b41" },
+              select: { id: true },
+            })).map(post => post.id),
+          },
+        },
+      });
+
+    await prisma.post.deleteMany({
+        where:{
+            authorId: req.user.id
+        }
+    })
+
     await prisma.user.delete({
         where:{
             id: req.user.id
