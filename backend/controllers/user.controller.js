@@ -478,6 +478,34 @@ const getUser = asyncHandler(async(req,res) => {
     })
 })
 
+const homeFeed = asyncHandler(async(req, res) => {
+    try {
+        const userId = req.user.id; 
+
+        const user = await prisma.user.findUnique({
+          where: { id: userId },
+          select: { following: true },
+        });
+    
+        if (!user) return res.status(404).json({ message: "User not found" });
+    
+        const posts = await prisma.post.findMany({
+          where: { authorId: { in: user.following } },
+          orderBy: { createdAt: "desc" },
+          include: {
+            User: {
+              select: { id: true, username: true, pfp: true },
+            },
+          },
+        });
+    
+        res.send(posts);
+      } catch (error) {
+        console.log(error)
+        throw new ApiError(400, error)
+      }
+})
+
 const deleteAccount = asyncHandler(async(req, res) => {
 
     const {password} = req.body
@@ -546,5 +574,6 @@ export {
     deleteAccount,
     findUser,
     getUserProfile,
-    followUser
+    followUser,
+    homeFeed
 }

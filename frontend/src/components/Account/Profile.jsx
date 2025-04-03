@@ -9,7 +9,6 @@ export default function Profile() {
   const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/3177/3177440.png";
   const params = useParams();
   const { user } = useUser();
-  //   console.log(userid)
   const [userr, setUserr] = useState(null);
   const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState([]);
@@ -89,24 +88,15 @@ export default function Profile() {
   return (
     <div className="bg-black min-h-screen flex flex-col items-center p-10 text-white">
       <div className="bg-[#111] pl-6 pr-3 pb-6 pt-3 rounded-lg shadow-lg w-full max-w-md text-center">
-        {!following && (
+      {user.id !== userr.id && (
           <div className="flex justify-end">
             <button
               onClick={handleClick}
-              className="cursor-pointer bg-blue-400 px-3 py-1 rounded-lg text-black font-semibold"
+              className={`cursor-pointer px-3 py-1 rounded-lg font-semibold ${
+                following ? "bg-white text-black" : "bg-blue-400 text-black"
+              }`}
             >
-              Follow
-            </button>
-          </div>
-        )}
-
-        {following && (
-          <div className="flex justify-end">
-            <button
-              onClick={handleClick}
-              className="cursor-pointer bg-white px-3 py-1 rounded-lg text-black font-semibold"
-            >
-              Following
+              {following ? "Following" : "Follow"}
             </button>
           </div>
         )}

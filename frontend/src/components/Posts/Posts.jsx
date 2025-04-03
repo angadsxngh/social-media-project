@@ -34,7 +34,7 @@ export default function Posts({
       {!post.mediaUrl && (
         <p className="text-gray-300 rounded-lg overflow-hidden w-fullh-40 lg:h-64">{post.caption}</p>
       )}
-    </div>
+    </div> 
     </NavLink>
   );
 }

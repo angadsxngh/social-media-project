@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { changePassword, deleteAccount, findUser, followUser, getUser, getUserProfile, loginUser, logoutUser, refreshAccessToken, registerUser, updateAccountDetails, updatePfp } from "../controllers/user.controller.js";
+import { changePassword, deleteAccount, findUser, followUser, getUser, getUserProfile, homeFeed, loginUser, logoutUser, refreshAccessToken, registerUser, updateAccountDetails, updatePfp } from "../controllers/user.controller.js";
 import { upload } from "../middleware/multer.middleware.js";
 import { verifyJWT } from "../middleware/auth.middleware.js";
 import { createNewPost, deletePost, fetchUserPosts, getPost, getPosts, likePost } from "../controllers/post.controller.js";
@@ -65,6 +65,8 @@ router.route('/likePost').post(verifyJWT, likePost)
 router.get("/profile/:userId", verifyJWT, getUserProfile);
 
 // router.get('/profile/:userId', fetchUserPosts)
+
+router.get('/feed', verifyJWT, homeFeed)
 
 router.post('/follow/:userId', verifyJWT, followUser)
 
