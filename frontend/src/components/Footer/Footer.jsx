@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import logo from "../../images/twitter.png";
+import logo from "../../images/singhstagram.png";
 import { FaHome, FaImages, FaRegCommentDots, FaUser } from "react-icons/fa";
 import { useUser } from "../../context/UserContext";
 import { CiSearch } from "react-icons/ci";
