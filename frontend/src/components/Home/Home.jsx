@@ -28,7 +28,7 @@ export default function Home() {
       {/* Features Section */}
       <section className="py-32 px-6 bg-[#111]">
         <h2 className="text-center text-3xl font-bold text-blue-400">
-          Why Join ~~?
+          Why Join Singhstagram?
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 max-w-5xl mx-auto">
           <div className="p-6 bg-[#222] rounded-lg text-center">
