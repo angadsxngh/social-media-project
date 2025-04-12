@@ -1,12 +1,23 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import logo from "../../images/twitter.png";
 import { FaHome, FaImages, FaRegCommentDots, FaUser } from "react-icons/fa";
+import { useUser } from "../../context/UserContext";
+import { CiSearch } from "react-icons/ci";
+import { IoHomeOutline } from "react-icons/io5";
+import { RiAccountCircle2Line } from "react-icons/ri";
 
-export default function Footer({ isLoggedIn }) {
+export default function Footer() {
+  const { user } = useUser();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    setIsLoggedIn(user);
+  }, [user]);
+
   return (
     <footer className="bg-black text-white">
-      <div className="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
+      <div className="hidden lg:block mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8 ">
         <div className="flex flex-col md:flex md:justify-between">
           <div className="mb-6 md:mb-0">
             <Link to="/" className="flex items-center">
@@ -82,53 +93,38 @@ export default function Footer({ isLoggedIn }) {
 
       {/* 🟢 Show Mobile Footer Only When Logged In */}
       {isLoggedIn && (
-        <div className="fixed bottom-0 left-0 w-full bg-black text-white p-3 flex justify-around items-center border-t border-gray-700 md:hidden">
+        <div className="fixed bottom-0 left-0 w-full py-5 bg-black text-white p-3 flex justify-around items-center border-t border-gray-700 md:hidden">
           <NavLink
-            to="/"
+            to="/Posts"
             className={({ isActive }) =>
               `flex flex-col items-center text-sm ${
-                isActive ? "text-blue-500" : "text-gray-400"
+                isActive ? "text-blue-400" : "text-gray-400"
               }`
             }
           >
-            <FaHome className="text-xl" />
-            <span>Home</span>
+            <IoHomeOutline className="text-xl" />
           </NavLink>
 
           <NavLink
-            to="/posts"
+            to="/find-user"
             className={({ isActive }) =>
               `flex flex-col items-center text-sm ${
-                isActive ? "text-blue-500" : "text-gray-400"
+                isActive ? "text-blue-400" : "text-gray-400"
               }`
             }
           >
-            <FaImages className="text-xl" />
-            <span>Posts</span>
+            <CiSearch className="text-xl" />
           </NavLink>
 
           <NavLink
-            to="/messages"
+            to="/Account"
             className={({ isActive }) =>
               `flex flex-col items-center text-sm ${
-                isActive ? "text-blue-500" : "text-gray-400"
+                isActive ? "text-blue-400" : "text-gray-400"
               }`
             }
           >
-            <FaRegCommentDots className="text-xl" />
-            <span>Messages</span>
-          </NavLink>
-
-          <NavLink
-            to="/profile"
-            className={({ isActive }) =>
-              `flex flex-col items-center text-sm ${
-                isActive ? "text-blue-500" : "text-gray-400"
-              }`
-            }
-          >
-            <FaUser className="text-xl" />
-            <span>Profile</span>
+            <RiAccountCircle2Line className="text-xl" />
           </NavLink>
         </div>
       )}

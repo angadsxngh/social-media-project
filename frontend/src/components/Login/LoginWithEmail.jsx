@@ -36,7 +36,7 @@ export default function LoginWithEmail() {
         if (data.user) {  
           setUser(data.user);
           toaster.addToast("Login successfull", "success")
-          navigate("/Account"); 
+          navigate("/Posts"); 
         } else {
           toaster.addToast("email and password do not match", "error")
           console.error("User data missing from response");

@@ -54,7 +54,7 @@ const registerUser = asyncHandler(async(req,res) => {
     //     throw new ApiError(400, "file not uploaded")
     // }
 
-    const pfp = ""
+    let pfp = ""
     
     if(pfpLocalPath){
         pfp = await uploadOnCloudinary(pfpLocalPath)
@@ -230,7 +230,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
     console.log("user: ",user)
   
     res.send(user);
-  });
+});
 
 const followUser = asyncHandler(async (req, res) => {
     const { userId } = req.params; // The user being followed

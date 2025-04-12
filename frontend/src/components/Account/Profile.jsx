@@ -79,7 +79,12 @@ export default function Profile() {
   }, [params.userid]);
 
   if (loading)
-    return <div className="text-white text-center mt-10">Loading...</div>;
+    return (
+      <div className="bg-black text-white flex items-center justify-center min-h-screen">
+        <span className="animate-spin rounded-full h-8 w-8 border-4 border-blue-500 border-t-transparent"></span>
+      </div>
+    );
+  
   if (error)
     return (
       <div className="text-red-500 text-center mt-10">{error.message}</div>

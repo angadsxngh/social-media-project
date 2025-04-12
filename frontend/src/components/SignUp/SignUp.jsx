@@ -68,7 +68,7 @@ export default function Signup() {
         if(data){
           setUser(data)
           const toast = toaster.addToast("Account registered successfully", "success")
-          navigate('/Account')
+          navigate('/Posts')
         } else{
           console.log("user data is missing from response")
           const toast = toaster.addToast("User with email or username already exists", "error")

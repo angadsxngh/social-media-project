@@ -36,7 +36,7 @@ export default function LoginWithUsername() {
         if(data.user){
           setUser(data.user)
           toaster.addToast("Login successfull", "success")
-          navigate('/Account')
+          navigate('/Posts')
         } else{
           toaster.addToast("Username and password do not match", "error")
         }
