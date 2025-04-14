@@ -10,7 +10,7 @@ export default defineConfig({
   ],
   server: {
     proxy: {
-      "/api": {target:"https://singhstagram.onrender.com",
+      "/api": {target:"http://13.50.84.146:3000",
       changeOrigin: true,
       secure: false,}
     },
