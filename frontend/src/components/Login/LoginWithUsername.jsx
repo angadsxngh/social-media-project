@@ -41,7 +41,7 @@ export default function LoginWithUsername() {
           toaster.addToast("Username and password do not match", "error")
         }
       } else{
-        toaster.addToast("Username and password do not match", "error")
+        toaster.addToast("please contact administrator", "error")
       }
     } catch (error) {
       toaster.addToast("Please contact administrator or try again later", "error")

@@ -10,10 +10,9 @@ export default defineConfig({
   ],
   server: {
     proxy: {
-      "/api":"http://13.50.84.146:3000"
-      // "/api": {target:"http://13.50.84.146:3000",
-      // changeOrigin: true,
-      // secure: false,}
+      "/api": {target:"http://13.50.84.146:3000",
+      changeOrigin: true,
+      secure: false,}
     },
   },
 })
