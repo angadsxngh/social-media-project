@@ -5,7 +5,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 export default function Card() {
   const navigate = useNavigate();
-  const location = useLocation();
   const usePost = location.state || { likes: [], comments: [], mediaUrl: "", caption: "" };
   const { user } = useUser();
   const [showComments, setShowComments] = useState(false);

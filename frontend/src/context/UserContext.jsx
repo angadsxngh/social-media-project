@@ -85,7 +85,7 @@ export const UserProvider = ({ children }) => {
         }
     };
 
-    return (
+    return ( 
         <UserContext.Provider value={{ 
             user, posts, setUser, loading, setGlobalLoading, logout, 
             refreshUser: fetchUser, refreshPosts: fetchPosts 
