@@ -474,7 +474,7 @@ const updatePfp = asyncHandler(async(req,res) => {
 
 const getUser = asyncHandler(async(req,res) => {
     res.send({
-        user:req.user
+        user : req.user
     })
 })
 
